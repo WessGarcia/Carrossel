@@ -38,7 +38,7 @@
   .count{font-family:var(--mono);font-size:20px;color:var(--muted);border:1px solid var(--line2);padding:10px 18px;border-radius:99px}
   .count em{color:var(--ink);font-style:normal;font-weight:800}
 
-  .bottom{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:30px}
+  .bottom{margin-top:auto;padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:30px}
   .progress{display:flex;gap:8px;flex:1;max-width:420px}
   .progress i{height:6px;flex:1;border-radius:6px;background:var(--line2)}
   .progress i.on{background:var(--lime)}
@@ -87,6 +87,16 @@
   .note .ic{flex:none;width:58px;height:58px;border-radius:16px;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;font-size:30px;font-weight:800;font-family:var(--display)}
   .note b{color:var(--lime)}
 
+
+  /* logo das ferramentas */
+  .logo-tile{position:absolute!important;right:76px;top:150px;width:180px;height:180px;border-radius:44px;display:grid;place-items:center;z-index:3!important;
+    background:linear-gradient(160deg,#1E1E23,#0E0E10);border:1px solid var(--line2);
+    box-shadow:0 30px 60px rgba(0,0,0,.55),0 0 0 8px rgba(200,255,60,.06),0 0 80px rgba(200,255,60,.12);transform:rotate(6deg)}
+  .logo-tile svg{width:70%;height:70%}
+  .logo-tile::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.10),transparent 40%);pointer-events:none}
+  .link .gh{flex:none;width:44px;height:44px;border-radius:12px;background:var(--ink);display:grid;place-items:center}
+  .link .gh svg{width:28px;height:28px}
+
   /* ===== COVER ===== */
   .cover .seven{font-family:var(--display);font-weight:800;font-size:820px;line-height:.74;letter-spacing:-40px;color:var(--lime);margin:70px 0 0 -30px;text-shadow:0 0 120px rgba(200,255,60,.35)}
   .cover h1{font-family:var(--display);font-weight:800;font-size:116px;line-height:.9;letter-spacing:-4px;margin-top:34px}
@@ -102,7 +112,7 @@
   .step{padding:24px 22px;display:flex;flex-direction:column;gap:14px}
   .step .n{font-family:var(--mono);font-size:18px;color:var(--lime);letter-spacing:2px}
   .step .t{font-size:27px;font-weight:600;line-height:1.2}
-  .step .vis{height:150px;border-radius:14px;background:#0B0B0D;border:1px solid var(--line);padding:12px;font-family:var(--mono);font-size:15px;color:var(--muted);overflow:hidden;line-height:1.45}
+  .step .vis{height:128px;border-radius:14px;background:#0B0B0D;border:1px solid var(--line);padding:12px;font-family:var(--mono);font-size:15px;color:var(--muted);overflow:hidden;line-height:1.45}
   .step .vis .c{color:var(--lime)}
   .tl{padding:22px 24px}
   .tl .ruler{display:flex;justify-content:space-between;font-family:var(--mono);font-size:15px;color:var(--dim);margin-bottom:10px}
@@ -218,13 +228,23 @@
 <section class="slide" id="s2">
   <div class="glow" style="right:-400px;top:-300px"></div>
   <div class="bignum">01</div>
+  <div class="logo-tile">
+    <svg viewBox="0 0 120 100" aria-label="Hyperframes">
+      <defs>
+        <linearGradient id="hfA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8BE15C"/><stop offset="1" stop-color="#3FD0B0"/></linearGradient>
+        <linearGradient id="hfB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6EDB66"/><stop offset="1" stop-color="#38D3EE"/></linearGradient>
+      </defs>
+      <path d="M50 12 L39 88 L10 50 Z" fill="url(#hfA)" stroke="url(#hfA)" stroke-width="14" stroke-linejoin="round"/>
+      <path d="M81 12 L70 88 L110 50 Z" fill="url(#hfB)" stroke="url(#hfB)" stroke-width="14" stroke-linejoin="round"/>
+    </svg>
+  </div>
   <div class="top">
     <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
     <div class="count"><em>02</em>/09</div>
   </div>
 
   <div style="margin-top:56px"><span class="tag">repo 01 <span class="sep">/</span> vídeo</span></div>
-  <h2>Hyper&shy;frames</h2>
+  <h2 style="font-size:118px;letter-spacing:-4.5px">Hyperframes</h2>
   <p class="sub">Vídeo pronto <span class="hl" style="font-size:36px;padding:2px 12px">sem abrir editor.</span></p>
 
   <div class="flow card" style="margin-top:44px;padding:8px">
@@ -259,7 +279,7 @@
     <div>Clipe cru entra, <b>MP4 com legenda animada</b> sai. Sem timeline, sem arrastar nada.</div>
   </div>
 
-  <div class="link" style="margin-top:22px"><span class="p">›</span><span class="u"><span>github.com/</span>heygen-com/hyperframes</span><span class="cp">SALVA</span></div>
+  <div class="link" style="margin-top:22px"><span class="gh"><svg viewBox="0 0 16 16" fill="#0A0A0B"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></span><span class="u"><span>github.com/</span>heygen-com/hyperframes</span><span class="cp">SALVA</span></div>
 
   <div class="bottom">
     <div class="progress"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
