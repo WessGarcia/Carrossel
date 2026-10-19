@@ -12,7 +12,7 @@ import path from 'node:path';
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const A = (f) => path.join(dir, 'audio', f);
 const DUR = 7;
-const MUSIC_DB = -9;   // trilha por baixo dos efeitos
+const MUSIC_DB = -14;  // trilha de fundo: fica abaixo dos efeitos
 
 // animação -> [efeito, volume]
 const MAP = {
