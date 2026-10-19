@@ -1,0 +1,69 @@
+/* Camada de animação usada só na renderização dos vídeos (render-video.mjs).
+   Usa as propriedades individuais translate/scale/rotate para não apagar
+   os transform: rotate(...) que já existem no layout estático. */
+
+@keyframes upIn{from{opacity:0;translate:0 70px;filter:blur(14px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes downIn{from{opacity:0;translate:0 -50px}to{opacity:1;translate:0 0}}
+@keyframes leftIn{from{opacity:0;translate:-90px 0;filter:blur(8px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes rightIn{from{opacity:0;translate:140px 0;filter:blur(10px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes charIn{0%{opacity:0;translate:0 105%;rotate:14deg;filter:blur(10px)}55%{opacity:1;translate:0 -10%;rotate:-3deg;filter:blur(0)}100%{opacity:1;translate:0 0;rotate:0deg}}
+@keyframes clipIn{from{clip-path:inset(-20% 100% -20% 0)}to{clip-path:inset(-20% -2% -20% 0)}}
+@keyframes popSpin{0%{opacity:0;scale:0;rotate:-140deg}55%{opacity:1;scale:1.18;rotate:12deg}78%{scale:.94;rotate:-4deg}100%{opacity:1;scale:1;rotate:0deg}}
+@keyframes pop{0%{opacity:0;scale:0}60%{opacity:1;scale:1.25}80%{scale:.92}100%{opacity:1;scale:1}}
+@keyframes stamp{0%{opacity:0;scale:2.4;rotate:-14deg;filter:blur(6px)}60%{opacity:1;scale:.9;rotate:2deg;filter:blur(0)}100%{opacity:1;scale:1;rotate:0deg}}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -16px}}
+@keyframes shineSweep{0%{translate:-160% 0}35%,100%{translate:260% 0}}
+@keyframes gridDrift{from{background-position:0 0,0 0}to{background-position:0 108px,108px 0}}
+@keyframes grain{0%{background-position:0 0}25%{background-position:-60px 40px}50%{background-position:30px -70px}75%{background-position:-90px -20px}100%{background-position:50px 80px}}
+@keyframes glowMove{0%,100%{translate:0 0;scale:1;opacity:.22}50%{translate:140px 90px;scale:1.25;opacity:.38}}
+@keyframes bigIn{from{opacity:0;translate:260px 0}to{opacity:1;translate:0 0}}
+@keyframes bigDrift{0%,100%{translate:0 0}50%{translate:-30px 10px}}
+@keyframes pulse{0%,100%{scale:1;box-shadow:0 0 0 0 rgba(200,255,60,.7)}50%{scale:1.1;box-shadow:0 0 0 16px rgba(200,255,60,0)}}
+@keyframes nudge{0%,100%{translate:0 0}50%{translate:14px 0}}
+@keyframes segFill{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes typing{from{clip-path:inset(-10% 100% -10% 0)}to{clip-path:inset(-10% 0 -10% 0)}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes flash{0%{opacity:0}8%{opacity:.85}100%{opacity:0}}
+@keyframes slam{0%{opacity:0;scale:3.4;filter:blur(24px)}55%{opacity:1;scale:.9;filter:blur(0)}75%{scale:1.05}100%{opacity:1;scale:1}}
+@keyframes shake{0%,100%{translate:0 0}15%{translate:-16px 8px}30%{translate:14px -10px}45%{translate:-10px 6px}60%{translate:8px -4px}80%{translate:-3px 2px}}
+@keyframes wiggle{0%,100%{rotate:0deg}25%{rotate:-8deg}75%{rotate:8deg}}
+@keyframes breathe{0%,100%{text-shadow:0 0 80px rgba(200,255,60,.25)}50%{text-shadow:0 0 180px rgba(200,255,60,.75)}}
+@keyframes playhead{from{left:3%}to{left:97%}}
+@keyframes drawLine{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+@keyframes areaIn{from{opacity:0}to{opacity:1}}
+@keyframes strike{from{background-size:0% 4px}to{background-size:100% 4px}}
+@keyframes thumb{0%,100%{top:8%}50%{top:62%}}
+@keyframes parallax{0%,100%{translate:0 0}50%{translate:0 -36px}}
+@keyframes rowScan{0%,100%{background:transparent}50%{background:rgba(200,255,60,.12)}}
+@keyframes cardGlow{0%,100%{border-color:var(--line2);box-shadow:none}50%{border-color:rgba(200,255,60,.8);box-shadow:0 0 40px rgba(200,255,60,.25)}}
+@keyframes wave{0%,100%{translate:0 0}50%{translate:0 -14px}}
+@keyframes wipeOut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 0 100%)}}
+@keyframes orbit{from{rotate:0deg}to{rotate:360deg}}
+
+/* fundo vivo */
+.slide::before{animation:gridDrift 6s linear infinite}
+.slide::after{animation:grain .5s steps(4) infinite}
+.glow{animation:glowMove 7s ease-in-out infinite}
+
+/* brilho que atravessa a logo */
+.logo-tile{overflow:hidden}
+.logo-tile .shine{position:absolute;inset:-20%;background:linear-gradient(100deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);pointer-events:none;z-index:4}
+
+/* caracteres do título */
+.w{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;will-change:transform}
+
+/* traço do texto riscado vira animável */
+.anim-del{text-decoration:none!important;background-image:linear-gradient(var(--red),var(--red));background-repeat:no-repeat;background-position:0 55%;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+/* cursor piscando */
+.caret{display:inline-block;width:.55em;height:1em;background:var(--lime);vertical-align:-.12em;margin-left:4px;border-radius:2px}
+
+/* flash branco da capa */
+.flash{position:absolute!important;inset:0;background:radial-gradient(circle at 30% 45%,rgba(200,255,60,.95),rgba(200,255,60,0) 60%);z-index:9!important;pointer-events:none;opacity:0}
+
+/* cortina do slide final */
+.curtain{position:absolute!important;inset:0;background:#0A0A0B;z-index:20!important}
+
+/* barra de rolagem do site "bom" (slide 03) */
+.anim-sb::after{animation:thumb 2.6s ease-in-out infinite}
