@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Carrossel — 7 repos pro Claude · @wessgarcia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0B; --bg2:#121214; --card:#16161A; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+    --ink:#F3F1EA; --muted:#8B8B86; --dim:#55554F;
+    --lime:#C8FF3C; --lime-ink:#0A0A0B; --red:#FF5A4E; --amber:#FFC23C;
+    --display:'Bricolage Grotesque',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Inter',system-ui,sans-serif;
+    --hand:'Caveat',cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#222;font-family:var(--sans);color:var(--ink);display:flex;flex-direction:column;gap:40px;align-items:center;padding:40px 0}
+
+  .slide{width:1080px;height:1350px;position:relative;overflow:hidden;background:var(--bg);padding:72px 76px;display:flex;flex-direction:column}
+  /* grid + grain */
+  .slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:54px 54px;mask-image:radial-gradient(ellipse 90% 70% at 70% 30%,#000 20%,transparent 75%);opacity:.7}
+  .slide::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+  .slide > *{position:relative;z-index:2}
+
+  .glow{position:absolute!important;z-index:0!important;width:760px;height:760px;border-radius:50%;filter:blur(140px);opacity:.22;background:var(--lime);pointer-events:none}
+
+  /* chrome */
+  .top{display:flex;justify-content:space-between;align-items:center}
+  .brand{display:flex;align-items:center;gap:16px}
+  .mono-mark{width:58px;height:58px;border-radius:16px;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:27px;letter-spacing:-1px;transform:rotate(-4deg)}
+  .brand b{display:block;font-family:var(--display);font-weight:800;font-size:25px;letter-spacing:-.3px}
+  .brand span{display:block;font-family:var(--mono);font-size:18px;color:var(--muted)}
+  .count{font-family:var(--mono);font-size:20px;color:var(--muted);border:1px solid var(--line2);padding:10px 18px;border-radius:99px}
+  .count em{color:var(--ink);font-style:normal;font-weight:800}
+
+  .bottom{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:30px}
+  .progress{display:flex;gap:8px;flex:1;max-width:420px}
+  .progress i{height:6px;flex:1;border-radius:6px;background:var(--line2)}
+  .progress i.on{background:var(--lime)}
+  .swipe{font-family:var(--mono);font-size:20px;color:var(--muted);display:flex;align-items:center;gap:12px}
+  .swipe svg{width:44px}
+
+  /* type */
+  .tag{display:inline-flex;align-items:center;gap:12px;font-family:var(--mono);font-size:21px;letter-spacing:2px;text-transform:uppercase;color:var(--lime)}
+  .tag::before{content:"";width:12px;height:12px;background:var(--lime);border-radius:3px;box-shadow:0 0 18px var(--lime)}
+  .tag .sep{color:var(--dim)}
+  h2{font-family:var(--display);font-weight:800;font-size:132px;line-height:.86;letter-spacing:-5px;margin-top:22px}
+  h2.md{font-size:112px;letter-spacing:-4px}
+  .hl{background:var(--lime);color:var(--lime-ink);padding:0 14px;border-radius:14px;display:inline-block;transform:rotate(-1.5deg)}
+  .sub{font-family:var(--display);font-weight:600;font-size:40px;letter-spacing:-1px;margin-top:22px;color:var(--ink)}
+  .sub s{text-decoration:none;color:var(--muted)}
+  .hand{font-family:var(--hand);font-weight:700;color:var(--lime);font-size:40px;line-height:1}
+
+  .bignum{position:absolute!important;right:-30px;top:120px;font-family:var(--display);font-weight:800;font-size:520px;line-height:.8;letter-spacing:-30px;color:transparent;-webkit-text-stroke:2px rgba(200,255,60,.16);z-index:1!important}
+
+  .card{background:linear-gradient(180deg,#18181C,#111113);border:1px solid var(--line2);border-radius:28px}
+  .row{display:flex;gap:22px}
+
+  .points{display:flex;flex-direction:column;gap:14px}
+  .pt{display:flex;align-items:center;gap:18px;font-size:29px;font-weight:500;line-height:1.2}
+  .pt .k{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(200,255,60,.12);color:var(--lime);font-family:var(--mono);font-weight:800;font-size:20px;border:1px solid rgba(200,255,60,.35)}
+  .pt b{color:var(--lime);font-weight:700}
+
+  .link{display:flex;align-items:center;gap:18px;padding:22px 26px;border-radius:22px;background:#0F0F11;border:1px dashed rgba(200,255,60,.45);font-family:var(--mono);font-size:25px}
+  .link .p{color:var(--lime);font-weight:800}
+  .link .u{color:var(--ink)}
+  .link .u span{color:var(--muted)}
+  .link .cp{margin-left:auto;font-size:17px;color:var(--lime-ink);background:var(--lime);padding:8px 14px;border-radius:10px;font-weight:800;letter-spacing:1px}
+
+  .win{border-radius:22px;overflow:hidden;border:1px solid var(--line2);background:#0E0E10}
+  .win .bar{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:17px;color:var(--muted)}
+  .win .bar i{width:12px;height:12px;border-radius:50%;background:#333}
+  .win .bar i:nth-child(1){background:#FF5F57}.win .bar i:nth-child(2){background:#FEBC2E}.win .bar i:nth-child(3){background:#28C840}
+  .win .bar span{margin-left:10px}
+
+  .chip{font-family:var(--mono);font-size:17px;padding:6px 12px;border-radius:8px;font-weight:600}
+  .chip.ok{background:rgba(200,255,60,.14);color:var(--lime)}
+  .chip.beta{background:rgba(255,194,60,.14);color:var(--amber)}
+  .chip.no{background:rgba(255,90,78,.14);color:var(--red)}
+
+  .note{display:flex;gap:20px;align-items:center;padding:24px 28px;font-size:29px;line-height:1.3}
+  .note .ic{flex:none;width:58px;height:58px;border-radius:16px;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;font-size:30px;font-weight:800;font-family:var(--display)}
+  .note b{color:var(--lime)}
+
+  /* ===== COVER ===== */
+  .cover .seven{font-family:var(--display);font-weight:800;font-size:820px;line-height:.74;letter-spacing:-40px;color:var(--lime);margin:70px 0 0 -30px;text-shadow:0 0 120px rgba(200,255,60,.35)}
+  .cover h1{font-family:var(--display);font-weight:800;font-size:116px;line-height:.9;letter-spacing:-4px;margin-top:34px}
+  .cover h1 .o{color:transparent;-webkit-text-stroke:2.5px var(--ink)}
+  .stack{position:absolute!important;right:76px;top:220px;display:flex;flex-direction:column;gap:14px;align-items:flex-end}
+  .stack .chip{font-size:20px;padding:10px 16px;background:#16161A;border:1px solid var(--line2);color:var(--ink);border-radius:12px}
+  .stack .chip:nth-child(odd){transform:rotate(3deg)} .stack .chip:nth-child(even){transform:rotate(-2deg)}
+  .stack .chip b{color:var(--lime)}
+
+  /* timeline (hyperframes) */
+  .flow{display:grid;grid-template-columns:1fr 46px 1fr 46px 1fr;align-items:stretch;gap:0}
+  .flow .arrow{display:grid;place-items:center;color:var(--lime);font-size:34px;font-family:var(--mono)}
+  .step{padding:24px 22px;display:flex;flex-direction:column;gap:14px}
+  .step .n{font-family:var(--mono);font-size:18px;color:var(--lime);letter-spacing:2px}
+  .step .t{font-size:27px;font-weight:600;line-height:1.2}
+  .step .vis{height:150px;border-radius:14px;background:#0B0B0D;border:1px solid var(--line);padding:12px;font-family:var(--mono);font-size:15px;color:var(--muted);overflow:hidden;line-height:1.45}
+  .step .vis .c{color:var(--lime)}
+  .tl{padding:22px 24px}
+  .tl .ruler{display:flex;justify-content:space-between;font-family:var(--mono);font-size:15px;color:var(--dim);margin-bottom:10px}
+  .track{display:flex;gap:6px;height:60px;margin-bottom:8px}
+  .track div{border-radius:8px}
+  .playhead{position:absolute;top:44px;bottom:16px;width:3px;background:var(--lime);left:62%;box-shadow:0 0 14px var(--lime)}
+  .playhead::before{content:"";position:absolute;top:-10px;left:-8px;border:9px solid transparent;border-top:12px solid var(--lime)}
+
+  /* scrollcraft */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .site{height:430px;border-radius:18px;overflow:hidden;position:relative;padding:22px;display:flex;flex-direction:column}
+  .site.bad{background:#15131F}
+  .site.bad .blob{position:absolute;right:-60px;bottom:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#8B7CFF,#4B3AD6)}
+  .site.good{background:linear-gradient(180deg,rgba(10,10,11,.15),rgba(10,10,11,.95)),
+      linear-gradient(160deg,#2a2d33 0%,#1a1c20 40%,#0d0e10 100%)}
+  .mountains{position:absolute;left:0;right:0;bottom:70px;height:190px}
+  .site .nav{display:flex;justify-content:space-between;font-size:15px;color:#bbb;position:relative}
+  .site .nav b{color:#fff}
+  .site .h{font-family:var(--display);font-weight:800;font-size:52px;line-height:.95;letter-spacing:-1.5px;margin-top:auto;position:relative}
+  .site .p{font-size:14px;color:#aaa;margin-top:8px;position:relative}
+  .site .btn{margin-top:12px;align-self:flex-start;background:#6E5CF6;padding:8px 16px;border-radius:99px;font-size:14px;position:relative}
+  .verdict{position:absolute;top:-16px;right:-12px;z-index:5;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:28px;border:4px solid var(--bg)}
+  .scrollbar{position:absolute;right:10px;top:60px;bottom:20px;width:6px;border-radius:6px;background:rgba(255,255,255,.1)}
+  .scrollbar::after{content:"";position:absolute;left:0;right:0;top:30%;height:30%;border-radius:6px;background:var(--lime)}
+
+  /* seo */
+  .kw{width:100%;border-collapse:collapse;font-size:19px}
+  .kw th{font-family:var(--mono);font-weight:400;font-size:15px;color:var(--dim);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .kw td{padding:13px 14px;border-bottom:1px solid var(--line);font-family:var(--mono)}
+  .kw td:first-child{font-family:var(--sans);font-weight:500}
+  .kw tr.sel td{background:rgba(200,255,60,.07)}
+  .score{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;font-size:15px;font-weight:800}
+
+  /* humanizer */
+  .doc{padding:24px 30px;font-size:25px;line-height:1.55;font-family:var(--sans)}
+  .doc del{color:var(--red);text-decoration-thickness:3px;background:rgba(255,90,78,.1);border-radius:6px;padding:0 4px}
+  .doc ins{text-decoration:none;color:var(--lime-ink);background:var(--lime);border-radius:6px;padding:0 6px;font-weight:600}
+  .doc .lbl{font-family:var(--mono);font-size:16px;letter-spacing:2px;color:var(--muted);margin-bottom:10px}
+
+  /* agent skills */
+  .cmd{padding:24px 22px;flex:1}
+  .cmd .s{font-family:var(--mono);font-weight:800;font-size:40px;color:var(--lime)}
+  .cmd p{font-size:23px;line-height:1.3;margin-top:10px;color:#ddd}
+  .todo{padding:6px 26px 18px}
+  .todo li{list-style:none;display:flex;align-items:center;gap:16px;font-size:25px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .todo li:last-child{border-bottom:0}
+  .box{width:30px;height:30px;border-radius:8px;border:2px solid var(--dim);flex:none;display:grid;place-items:center;font-size:18px;font-weight:800}
+  .todo li.done{color:var(--muted)} .todo li.done span{text-decoration:line-through}
+  .todo li.done .box{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
+  .todo li.now{color:var(--ink);background:rgba(200,255,60,.08);margin:0 -14px;padding:11px 14px;border-radius:12px;border:0}
+  .todo li.now .box{border-color:var(--lime)}
+  .todo li.now::after{content:"← agora";margin-left:auto;font-family:var(--mono);font-size:17px;color:var(--lime)}
+
+  /* expo phone */
+  .phone{width:380px;height:720px;border-radius:58px;background:#050506;border:10px solid #2A2A2E;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 2px #3a3a3e,0 0 90px rgba(200,255,60,.15);padding:22px 22px;position:relative;flex:none;transform:rotate(4deg)}
+  .phone .isl{width:120px;height:34px;border-radius:20px;background:#000;margin:0 auto 26px;border:1px solid #222}
+  .phone .ttl{font-family:var(--display);font-weight:800;font-size:40px;letter-spacing:-1.5px}
+  .phone .sm{font-size:17px;color:var(--muted);margin:4px 0 22px}
+  .phone .it{display:flex;gap:14px;align-items:center;padding:14px;border-radius:18px;background:#141417;margin-bottom:10px}
+  .phone .it .ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:22px;flex:none;font-weight:800}
+  .phone .it b{display:block;font-size:18px} .phone .it span{font-size:14px;color:var(--muted)}
+  .phone .cta{position:absolute;left:22px;right:22px;bottom:30px;height:66px;border-radius:20px;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px}
+
+  /* final */
+  .final{background:var(--lime);color:var(--lime-ink)}
+  .final::before{background-image:linear-gradient(rgba(0,0,0,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.07) 1px,transparent 1px);mask-image:none}
+  .final .count{color:#1d1d1d;border-color:rgba(0,0,0,.2)} .final .count em{color:#000}
+  .final .mono-mark{background:#0A0A0B;color:var(--lime)}
+  .final .brand span{color:#2b2b2b}
+  .final .progress i{background:rgba(0,0,0,.15)} .final .progress i.on{background:#0A0A0B}
+  .final .swipe{color:#1d1d1d}
+  .final h2{font-size:150px;letter-spacing:-7px;line-height:.84;margin-top:60px}
+  .final .ol{color:transparent;-webkit-text-stroke:3px #0A0A0B}
+  .actions{display:flex;flex-direction:column;gap:16px;margin-top:56px}
+  .act{display:flex;align-items:center;gap:24px;background:#0A0A0B;color:var(--ink);border-radius:26px;padding:24px 30px;font-size:31px;font-weight:600}
+  .act .n{width:62px;height:62px;border-radius:18px;background:var(--lime);color:#0A0A0B;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:30px;flex:none}
+  .act small{display:block;font-size:22px;color:var(--muted);font-weight:400;margin-top:4px}
+  .numbers{display:flex;gap:10px;margin-top:10px}
+  .numbers span{width:46px;height:46px;border-radius:12px;border:2px solid var(--lime);display:grid;place-items:center;font-family:var(--mono);font-weight:800;color:var(--lime);font-size:22px}
+</style>
+</head>
+<body>
+
+<!-- ================= 01 CAPA ================= -->
+<section class="slide cover" id="s1">
+  <div class="glow" style="left:-300px;top:200px"></div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>01</em>/09</div>
+  </div>
+
+  <div class="stack">
+    <div class="chip"><b>›</b> vídeo</div>
+    <div class="chip"><b>›</b> web design</div>
+    <div class="chip"><b>›</b> SEO</div>
+    <div class="chip"><b>›</b> Google Workspace</div>
+    <div class="chip"><b>›</b> texto humano</div>
+    <div class="chip"><b>›</b> planejamento</div>
+    <div class="chip"><b>›</b> apps mobile</div>
+  </div>
+
+  <div class="seven">7</div>
+  <h1>repositórios<br>do GitHub pra<br><span class="o">turbinar</span> o <span class="hl">Claude</span></h1>
+  <p class="sub" style="margin-top:28px"><s>// </s>o 4º vai mudar teu dia a dia</p>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="swipe">arrasta <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 02 HYPERFRAMES ================= -->
+<section class="slide" id="s2">
+  <div class="glow" style="right:-400px;top:-300px"></div>
+  <div class="bignum">01</div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>02</em>/09</div>
+  </div>
+
+  <div style="margin-top:56px"><span class="tag">repo 01 <span class="sep">/</span> vídeo</span></div>
+  <h2>Hyper&shy;frames</h2>
+  <p class="sub">Vídeo pronto <span class="hl" style="font-size:36px;padding:2px 12px">sem abrir editor.</span></p>
+
+  <div class="flow card" style="margin-top:44px;padding:8px">
+    <div class="step">
+      <div class="n">01 · PROMPT</div>
+      <div class="vis">"corte de 30s, legenda<br>animada, destaque em<br><span class="c">Claude Code</span>"▍</div>
+      <div class="t">Você descreve o vídeo pro Claude</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="n">02 · HTML</div>
+      <div class="vis"><span class="c">&lt;div</span> class="cena"&gt;<br>&nbsp;&nbsp;<span class="c">&lt;h1&gt;</span>O maior erro<br>&nbsp;&nbsp;no Claude Code…</div>
+      <div class="t">Ele monta tudo em HTML</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="n">03 · MP4</div>
+      <div class="vis" style="display:grid;place-items:center;color:var(--lime);font-size:40px;font-family:var(--display);font-weight:800">▶ .mp4</div>
+      <div class="t">Sai um MP4 de verdade no PC</div>
+    </div>
+  </div>
+
+  <div class="card tl" style="margin-top:22px;position:relative">
+    <div class="ruler"><span>00:00</span><span>00:05</span><span>00:10</span><span>00:15</span><span>00:20</span><span>00:25</span><span>00:30</span></div>
+    <div class="track"><div style="flex:3;background:#2B2B33"></div><div style="flex:5;background:#33333D"></div><div style="flex:2;background:#2B2B33"></div><div style="flex:4;background:#33333D"></div></div>
+    <div class="track" style="height:30px"><div style="flex:1;background:transparent"></div><div style="flex:3;background:var(--lime)"></div><div style="flex:1;background:transparent"></div><div style="flex:4;background:rgba(200,255,60,.5)"></div><div style="flex:3;background:transparent"></div></div>
+    <div class="playhead"></div>
+  </div>
+
+  <div class="card note" style="margin-top:22px">
+    <div class="ic">▶</div>
+    <div>Clipe cru entra, <b>MP4 com legenda animada</b> sai. Sem timeline, sem arrastar nada.</div>
+  </div>
+
+  <div class="link" style="margin-top:22px"><span class="p">›</span><span class="u"><span>github.com/</span>heygen-com/hyperframes</span><span class="cp">SALVA</span></div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="swipe">próximo <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 03 SCROLLCRAFT ================= -->
+<section class="slide" id="s3">
+  <div class="glow" style="left:-400px;bottom:-300px"></div>
+  <div class="bignum">02</div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>03</em>/09</div>
+  </div>
+
+  <div style="margin-top:56px"><span class="tag">repo 02 <span class="sep">/</span> web design</span></div>
+  <h2>Scroll&shy;craft</h2>
+  <p class="sub">Site que <span class="hl" style="font-size:36px;padding:2px 12px">se mexe de verdade.</span></p>
+
+  <div class="vs" style="margin-top:44px">
+    <div style="position:relative">
+      <div class="verdict" style="background:var(--red);color:#fff">✕</div>
+      <div class="site bad">
+        <div class="blob"></div>
+        <div class="nav"><b>Estúdio IA</b><span>Recursos · Preços · Blog</span></div>
+        <div class="h">Crie com IA</div>
+        <div class="p">Transforme suas ideias em realidade com IA.</div>
+        <div class="btn">Começar</div>
+      </div>
+      <p style="margin-top:16px;font-size:23px;color:var(--muted)"><b style="color:var(--ink)">Site genérico de IA</b><br>uns efeitos fracos de aparecer</p>
+    </div>
+    <div style="position:relative">
+      <div class="verdict" style="background:var(--lime);color:var(--lime-ink)">✓</div>
+      <div class="site good">
+        <svg class="mountains" viewBox="0 0 400 190" preserveAspectRatio="none"><path d="M0 190 L0 120 L60 70 L95 100 L150 30 L190 80 L230 50 L290 110 L340 60 L400 100 L400 190Z" fill="#3a3d44"/><path d="M0 190 L0 150 L70 110 L120 140 L180 90 L250 140 L320 105 L400 140 L400 190Z" fill="#24262b"/><path d="M150 30 L165 48 L140 52Z M340 60 L352 74 L330 76Z" fill="#cfd3da"/></svg>
+        <div class="scrollbar"></div>
+        <div class="nav"><b>Cume</b><span>Início · Projetos · Sobre</span></div>
+        <div style="font-family:var(--mono);font-size:12px;letter-spacing:2px;color:#aaa;margin-top:auto;position:relative">EXPERIÊNCIAS COM ROLAGEM</div>
+        <div class="h" style="margin-top:6px">Ideias que<br><span style="color:var(--lime)">se movem</span></div>
+        <div class="p">Sites que contam a história enquanto você rola.</div>
+      </div>
+      <p style="margin-top:16px;font-size:23px;color:var(--muted)"><b style="color:var(--ink)">Com Scrollcraft</b><br>rolagem de verdade + regras de design</p>
+    </div>
+  </div>
+
+  <div class="card note" style="margin-top:30px">
+    <div class="ic">✦</div>
+    <div>Ele confere a página inteira, rolagem por rolagem, e <b>acha os erros antes de você.</b></div>
+  </div>
+
+  <div class="link" style="margin-top:22px"><span class="p">›</span><span class="u"><span>github.com/</span>nateherkai/scroll-craft</span><span class="cp">SALVA</span></div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="swipe">próximo <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 04 OPEN SEO ================= -->
+<section class="slide" id="s4">
+  <div class="glow" style="right:-350px;top:-200px"></div>
+  <div class="bignum">03</div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>04</em>/09</div>
+  </div>
+
+  <div style="margin-top:56px"><span class="tag">repo 03 <span class="sep">/</span> SEO</span></div>
+  <h2>Open <span class="hl">SEO</span></h2>
+  <p class="sub">Dados reais. <s>Zero chute.</s></p>
+
+  <div class="win" style="margin-top:40px">
+    <div class="bar"><i></i><i></i><i></i><span>pesquisa de palavras-chave</span><span style="margin-left:auto;color:var(--lime)">● ao vivo</span></div>
+    <div style="display:grid;grid-template-columns:1.45fr 1fr">
+      <table class="kw">
+        <tr><th>PALAVRA-CHAVE</th><th>VOL.</th><th>CPC</th><th>SCORE</th></tr>
+        <tr><td>google search console</td><td>450k</td><td>$11.6</td><td><span class="score" style="background:rgba(255,90,78,.15);color:var(--red)">76</span></td></tr>
+        <tr class="sel"><td>seo tools</td><td>110k</td><td>$21.8</td><td><span class="score" style="background:rgba(255,194,60,.15);color:var(--amber)">66</span></td></tr>
+        <tr><td>bing webmaster tools</td><td>18k</td><td>$15.4</td><td><span class="score" style="background:rgba(200,255,60,.15);color:var(--lime)">14</span></td></tr>
+        <tr><td>google webmaster tools</td><td>6.6k</td><td>$16.7</td><td><span class="score" style="background:rgba(255,194,60,.15);color:var(--amber)">75</span></td></tr>
+      </table>
+      <div style="border-left:1px solid var(--line);padding:16px 20px">
+        <div style="font-family:var(--mono);font-size:15px;color:var(--dim)">TENDÊNCIA · 12 MESES</div>
+        <svg viewBox="0 0 300 170" style="width:100%;margin-top:12px">
+          <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C8FF3C" stop-opacity=".45"/><stop offset="1" stop-color="#C8FF3C" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0 150 L30 146 L60 150 L90 147 L120 149 L150 144 L180 136 L205 30 L225 112 L250 132 L300 133 L300 170 L0 170Z" fill="url(#g)"/>
+          <path d="M0 150 L30 146 L60 150 L90 147 L120 149 L150 144 L180 136 L205 30 L225 112 L250 132 L300 133" fill="none" stroke="#C8FF3C" stroke-width="3"/>
+          <circle cx="205" cy="30" r="7" fill="#C8FF3C"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="points" style="margin-top:30px">
+    <div class="pt"><span class="k">01</span>Palavras-chave com <b>dados reais</b></div>
+    <div class="pt"><span class="k">02</span>Sua <b>posição real</b> no Google + backlinks de verdade</div>
+    <div class="pt"><span class="k">03</span>Mostra <b>o que mudar primeiro</b></div>
+    <div class="pt"><span class="k">04</span><span>Pague só pelo que usar · auditoria vira <b>relatório pro cliente</b></span></div>
+  </div>
+
+  <div class="link" style="margin-top:28px"><span class="p">›</span><span class="u"><span>github.com/</span>every-app/open-seo</span><span class="cp">SALVA</span></div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="swipe">próximo <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 05 GOOGLE WORKSPACE CLI ================= -->
+<section class="slide" id="s5">
+  <div class="glow" style="left:-350px;top:300px"></div>
+  <div class="bignum">04</div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>05</em>/09</div>
+  </div>
+
+  <div style="margin-top:56px"><span class="tag">repo 04 <span class="sep">/</span> produtividade</span></div>
+  <h2 class="md">Google<br>Workspace <span class="hl">CLI</span></h2>
+  <p class="sub" style="font-size:36px">Claude no Drive, Gmail, Agenda, Docs e Planilhas.</p>
+
+  <div class="vs" style="margin-top:38px">
+    <div class="card" style="padding:26px;position:relative">
+      <div class="verdict" style="background:var(--red);color:#fff">✕</div>
+      <div style="font-family:var(--display);font-weight:800;font-size:32px">Conector pronto</div>
+      <div style="color:var(--muted);font-size:21px;margin:4px 0 18px">cobre só uma parte</div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:23px">
+        <div style="display:flex;justify-content:space-between">Drive<span class="chip ok">sim</span></div>
+        <div style="display:flex;justify-content:space-between">Gmail<span class="chip ok">sim</span></div>
+        <div style="display:flex;justify-content:space-between">Agenda<span class="chip ok">sim</span></div>
+        <div style="display:flex;justify-content:space-between">Docs<span class="chip beta">beta</span></div>
+        <div style="display:flex;justify-content:space-between">Planilhas<span class="chip beta">beta</span></div>
+      </div>
+    </div>
+    <div class="card" style="padding:26px;position:relative;border-color:rgba(200,255,60,.5);background:linear-gradient(180deg,rgba(200,255,60,.08),#111113)">
+      <div class="verdict" style="background:var(--lime);color:var(--lime-ink)">✓</div>
+      <div style="font-family:var(--display);font-weight:800;font-size:32px">Esta CLI</div>
+      <div style="color:var(--muted);font-size:21px;margin:4px 0 18px">qualquer agente, Workspace inteiro</div>
+      <div style="font-family:var(--mono);font-size:19px;line-height:1.75;color:#cfcfcf;background:#0B0B0D;border:1px solid var(--line);border-radius:14px;padding:14px 16px">
+        <span style="color:var(--lime)">✓</span> drive &nbsp;<span style="color:var(--lime)">✓</span> gmail<br><span style="color:var(--lime)">✓</span> agenda <span style="color:var(--lime)">✓</span> docs<br><span style="color:var(--lime)">✓</span> planilhas<br><span style="color:var(--lime)">✓</span> chat, admin e +
+      </div>
+      <div style="margin-top:16px;font-family:var(--display);font-weight:800;font-size:30px"><span style="color:var(--lime)">95</span> skills prontas</div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:26px;align-items:center">
+    <div class="card" style="padding:18px 24px;font-family:var(--mono);font-size:22px;display:flex;gap:14px;align-items:center">★ <b style="color:var(--lime)">31.6k</b> stars</div>
+    <div style="background:var(--amber);color:#1a1300;padding:16px 24px;border-radius:14px;transform:rotate(-2deg);font-family:var(--hand);font-size:36px;font-weight:700;line-height:1;box-shadow:0 12px 30px rgba(0,0,0,.4)">⚠ atenção: não é produto oficial do Google</div>
+  </div>
+
+  <div class="link" style="margin-top:26px"><span class="p">›</span><span class="u"><span>github.com/</span>googleworkspace/cli</span><span class="cp">SALVA</span></div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <div class="swipe">próximo <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 06 HUMANIZER ================= -->
+<section class="slide" id="s6">
+  <div class="glow" style="right:-380px;bottom:-200px"></div>
+  <div class="bignum">05</div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>06</em>/09</div>
+  </div>
+
+  <div style="margin-top:56px"><span class="tag">repo 05 <span class="sep">/</span> escrita</span></div>
+  <h2>Humanizer</h2>
+  <p class="sub">Texto <span class="hl" style="font-size:36px;padding:2px 12px">sem cara de IA.</span></p>
+
+  <div class="win" style="margin-top:40px">
+    <div class="bar"><i></i><i></i><i></i><span>legenda_final.txt</span><span style="margin-left:auto;color:var(--lime)">humanizer ✓</span></div>
+    <div class="doc">
+      <div class="lbl">— ANTES / DEPOIS</div>
+      <del>Não é só uma ferramenta, é uma revolução.</del> <ins>Essa ferramenta me poupa 2h por dia.</ins>
+      Ela é <del>rápida, intuitiva e poderosa</del> <ins>rápida</ins>, e o resultado <del>eleva seu conteúdo a outro patamar</del> <ins>sai pronto pra postar</ins>.
+    </div>
+  </div>
+
+  <div style="margin-top:24px;font-family:var(--display);font-weight:800;font-size:32px">Ele corta:</div>
+  <div class="points" style="margin-top:12px;gap:10px">
+    <div class="pt"><span class="k" style="color:var(--red);background:rgba(255,90,78,.12);border-color:rgba(255,90,78,.4)">✕</span>"Não é só X, é Y"</div>
+    <div class="pt"><span class="k" style="color:var(--red);background:rgba(255,90,78,.12);border-color:rgba(255,90,78,.4)">✕</span>Tudo em grupos de três</div>
+    <div class="pt"><span class="k" style="color:var(--red);background:rgba(255,90,78,.12);border-color:rgba(255,90,78,.4)">✕</span>Palavras infladas, de vendedor</div>
+  </div>
+
+  <div class="card note" style="margin-top:22px;font-size:25px;padding:18px 24px">
+    <div class="ic">W</div>
+    <div>Feito em cima do guia que os <b>editores da Wikipédia</b> usam pra caçar texto de IA. <span style="font-family:var(--mono);color:var(--muted);font-size:21px">★ 57.7k</span></div>
+  </div>
+
+  <div class="link" style="margin-top:22px"><span class="p">›</span><span class="u"><span>github.com/</span>blader/humanizer</span><span class="cp">SALVA</span></div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+    <div class="swipe">próximo <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 07 AGENT SKILLS ================= -->
+<section class="slide" id="s7">
+  <div class="glow" style="left:-380px;top:-250px"></div>
+  <div class="bignum">06</div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>07</em>/09</div>
+  </div>
+
+  <div style="margin-top:56px"><span class="tag">repo 06 <span class="sep">/</span> método</span></div>
+  <h2>Agent <span class="hl">Skills</span></h2>
+  <p class="sub">Planejar <s>antes</s> de programar.</p>
+
+  <div class="row" style="margin-top:40px;align-items:stretch">
+    <div class="card cmd"><div class="s">/spec</div><p>escreve o plano antes de qualquer código</p></div>
+    <div class="card cmd"><div class="s">/plan</div><p>quebra em tarefas pequenas</p></div>
+    <div class="card cmd" style="border-color:rgba(200,255,60,.5)"><div class="s">/build</div><p>faz uma tarefa por vez, com teste</p></div>
+  </div>
+
+  <div class="win" style="margin-top:22px">
+    <div class="bar"><i></i><i></i><i></i><span>tasks/todo.md</span><span style="margin-left:auto">2/7</span></div>
+    <ul class="todo">
+      <li class="done"><div class="box">✓</div><span>Montar a estrutura do projeto</span></li>
+      <li class="done"><div class="box">✓</div><span>Criar o banco de dados</span></li>
+      <li class="now"><div class="box"></div><span>Criar a busca</span></li>
+      <li><div class="box"></div><span>Montar as telas</span></li>
+      <li><div class="box"></div><span>Criar as tags + escrever os testes</span></li>
+    </ul>
+  </div>
+
+  <div class="card note" style="margin-top:22px">
+    <div class="ic">↻</div>
+    <div>O plano fica salvo em arquivos: numa conversa nova, o Claude <b>continua de onde parou.</b></div>
+  </div>
+
+  <div class="link" style="margin-top:22px"><span class="p">›</span><span class="u"><span>github.com/</span>addyosmani/agent-skills</span><span class="cp">SALVA</span></div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+    <div class="swipe">próximo <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 08 EXPO SKILLS ================= -->
+<section class="slide" id="s8">
+  <div class="glow" style="right:-300px;top:300px"></div>
+  <div class="bignum" style="top:auto;bottom:80px;right:auto;left:-40px">07</div>
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>08</em>/09</div>
+  </div>
+
+  <div class="row" style="margin-top:56px;gap:40px">
+    <div style="flex:1">
+      <span class="tag">repo 07 <span class="sep">/</span> mobile</span>
+      <h2 style="font-size:124px">Expo<br><span class="hl">Skills</span></h2>
+      <p class="sub" style="font-size:36px">App de verdade,<br>feito com IA.</p>
+      <div class="points" style="margin-top:36px;gap:18px">
+        <div class="pt" style="font-size:26px"><span class="k">01</span><span>Da ideia a um app <b>rodando no seu celular</b></span></div>
+        <div class="pt" style="font-size:26px"><span class="k">02</span><span>Skills <b>oficiais</b>, feitas pela própria Expo</span></div>
+        <div class="pt" style="font-size:26px"><span class="k">03</span><span>Lista dos <b>20 sinais</b> de app com cara de IA</span></div>
+      </div>
+    </div>
+    <div class="phone" style="margin-top:20px">
+      <div class="isl"></div>
+      <div class="ttl">Meu App</div>
+      <div class="sm">feito com Expo ✦</div>
+      <div class="it"><div class="ico" style="background:rgba(200,255,60,.15);color:var(--lime)">⚛</div><div><b>Bem-vindo!</b><span>rodando num celular de verdade</span></div></div>
+      <div class="it"><div class="ico" style="background:#2b2350;color:#a99bff">ϟ</div><div><b>Edite e salve</b><span>veja a mudança na hora</span></div></div>
+      <div class="it"><div class="ico" style="background:#123324;color:#4ee39a">▯</div><div><b>Roda no celular</b><span>teste enquanto cria</span></div></div>
+      <div class="it"><div class="ico" style="background:#3a1626;color:#ff7aa8">◈</div><div><b>Expo SDK</b><span>câmera, push, mapas…</span></div></div>
+      <div class="cta">Abrir app →</div>
+    </div>
+  </div>
+
+  <div class="card note" style="margin-top:44px">
+    <div class="ic">✦</div>
+    <div>Diga que o app é em <b>Expo</b>: o Claude escolhe a skill certa sozinho.</div>
+  </div>
+
+  <div class="link" style="margin-top:22px"><span class="p">›</span><span class="u"><span>github.com/</span>expo/skills</span><span class="cp">SALVA</span></div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+    <div class="swipe">último <svg viewBox="0 0 44 16" fill="none" stroke="#C8FF3C" stroke-width="2.5"><path d="M0 8h40M33 1l7 7-7 7"/></svg></div>
+  </div>
+</section>
+
+<!-- ================= 09 CTA ================= -->
+<section class="slide final" id="s9">
+  <div class="top">
+    <div class="brand"><div class="mono-mark">WG</div><div><b>Wesley Garcia</b><span>@wessgarcia</span></div></div>
+    <div class="count"><em>09</em>/09</div>
+  </div>
+
+  <h2>Não deixa<br>isso <span class="ol">sumir</span><br>no feed.</h2>
+
+  <div class="actions">
+    <div class="act"><div class="n">↓</div><div>Salva o post<small>pra instalar com calma depois</small></div></div>
+    <div class="act"><div class="n">#</div><div>Comenta o número do repo<small>que você vai testar primeiro</small>
+      <div class="numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div></div></div>
+    <div class="act"><div class="n">+</div><div>Segue <span style="color:var(--lime)">@wessgarcia</span><small>IA aplicada, sem enrolação, toda semana</small></div></div>
+  </div>
+
+  <div class="bottom">
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <div class="swipe" style="font-weight:800">manda pra quem usa Claude ↗</div>
+  </div>
+</section>
+
+</body>
+</html>
